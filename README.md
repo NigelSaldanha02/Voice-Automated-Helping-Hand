@@ -4,7 +4,7 @@
 This project aims to develop a **voice-controlled robotic assistant** capable of recognizing and retrieving household objects. It combines **speech recognition, object detection, kinematics, and robotic control** to create a “Helping Hand” for elderly individuals and people with mobility challenges.  
 
 The system integrates:  
-- **Voice automation** (speech-to-text + intent classification)  
+- **Voice automation** (speech-to-text)  
 - **YOLO-based object detection** with dual-camera setup  
 - **Kinematic modeling** for robotic arm movement  
 - **Mobile app interface** for user commands  
@@ -31,16 +31,15 @@ The system integrates:
 - **Robotic Arm** → executes pick-and-place tasks  
 
 ### Software  
-- **Speech Recognition**: Google API / Vosk / Whisper  
-- **Intent Classification**: TensorFlow model  
-- **Object Detection**: YOLOv8 / YOLO-NAS  
+- **Speech Recognition**: Google API / Vosk / Whisper    
+- **Object Detection**: YOLO  
 - **Mobile App**: Flutter / Flask backend (or MIT App Inventor for prototype)  
 
 ---
 
 ## 📚 Literature Review Summary  
 We reviewed **15 research papers** covering:  
-- Object detection techniques (YOLO,RCNN)  
+- Object detection techniques (YOLO)  
 - Speech recognition models (Vosk, Whisper, SpeechRecognition, PocketSphinx)  
 - Kinematics in robotic manipulators  
 - Assistive robotics applications  
@@ -57,10 +56,9 @@ We reviewed **15 research papers** covering:
 
 **Sept – Dec 2025:**  
 - ✅ Literature Review (Sept–Oct)  
-- 🔄 Finalize STT & intent classification pipeline  
-- 🔄 Implement object detection (YOLO on RPi)  
-- 🔄 Build simple mobile app interface  
-- (No integration yet)  
+- ✅ Finalize STT  
+- ✅ Implement object detection
+- ✅ Build simple mobile app interface  
 
 **Jan – Apr 2026:**  
 - 🔄 Develop robotic arm kinematics & simulations  
