@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+
+# VS Code
+.vscode/
+flutter/
+
+# OS
+.DS_Store
+
+Dexter_ER2_Simulation.py
