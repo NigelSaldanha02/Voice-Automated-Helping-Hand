@@ -15,4 +15,6 @@ flutter/
 # OS
 .DS_Store
 
+# .py
 Dexter_ER2_Simulation.py
+Whisper_Test.py
