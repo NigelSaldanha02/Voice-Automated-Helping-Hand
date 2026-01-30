@@ -8,7 +8,7 @@ The system integrates:
 - **YOLO-based object detection** with dual-camera setup  
 - **Kinematic modeling** for robotic arm movement  
 - **Mobile app interface** for user commands  
-- **Raspberry Pi + ESP32 hardware control**  
+- **Raspberry Pi 5**  
 
 ---
 
@@ -24,29 +24,28 @@ The system integrates:
 
 ### Hardware  
 - **Raspberry Pi** → main controller for object detection & voice processing  
-- **ESP32** → robotic arm control + actuation  
 - **Dual Cameras**:  
   - Overhead camera → XY coordinate localization of objects  
   - Arm-mounted camera → classification & confirmation  
 - **Robotic Arm** → executes pick-and-place tasks  
 
 ### Software  
-- **Speech Recognition**: Google API / Vosk / Whisper    
+- **Speech Recognition**: Google API  
 - **Object Detection**: YOLO  
-- **Mobile App**: Flutter / Flask backend (or MIT App Inventor for prototype)  
+- **Mobile App**: Flutter / Flask backend
 
 ---
 
 ## 📚 Literature Review Summary  
 We reviewed **15 research papers** covering:  
 - Object detection techniques (YOLO)  
-- Speech recognition models (Vosk, Whisper, SpeechRecognition, PocketSphinx)  
+- Speech recognition models (SpeechRecognition)  
 - Kinematics in robotic manipulators  
 - Assistive robotics applications  
 
 **Key Takeaways:**  
 - YOLO is widely used for real-time household object detection  
-- Whisper and Vosk provide offline/on-device STT, while Google API is cloud-based  
+- Google API provides STT  
 - Kinematics formulas are essential for robotic arm accuracy  
 - Prior works lacked full integration of **voice + vision + robotics** in a single system — this is our innovation point  
 
@@ -70,9 +69,10 @@ We reviewed **15 research papers** covering:
 
 ## 📌 Current Status  
 - ✅ Literature review completed  
-- 🔄 Exploring STT frameworks (Google API, Vosk, Whisper)  
-- 🔄 Testing YOLO for household object detection  
-- 🔄 Designing system workflow and block diagrams  
+- ✅ Exploring STT frameworks (Google API, Vosk, Whisper)  
+- ✅ Testing YOLO for household object detection  
+- 🔄 Integrating STT+YOLO into an app
+- 🔄 Kinematics and simulations for the arm
 
 ---
 
@@ -103,5 +103,6 @@ keywords: {Speech recognition;Convolutional neural networks;Data models;Training
 - Al Tahtawi, Adnan & Agni, Muhammad & Hendrawati, Trisiani. (2021). Small-scale Robot Arm Design with Pick and Place Mission Based on Inverse Kinematics. Journal of Robotics and Control (JRC). 2. 10.18196/26124. 
 
 ---
+
 
 
