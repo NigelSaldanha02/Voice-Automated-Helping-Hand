@@ -18,8 +18,31 @@ flutter/
 # .py
 Dexter_ER2_Simulation.py
 Whisper_Test.py
-<<<<<<< HEAD
 Dexter_copsim.py
-=======
-Dexter_copsim.py
->>>>>>> 0270b74f090072548e3626d2b84b4109d56c8e5e
+
+# --------------------
+# Ignore entire Flutter app
+vahh_app/*
+
+# --------------------
+# BUT allow Dart source
+!vahh_app/lib/
+!vahh_app/lib/**
+
+# --------------------
+# Allow backend server
+!vahh_app/vahh_server/
+!vahh_app/vahh_server/**
+
+# --------------------
+# Still ignore Flutter build/system files
+vahh_app/.dart_tool/
+vahh_app/build/
+vahh_app/android/
+vahh_app/ios/
+vahh_app/linux/
+vahh_app/windows/
+vahh_app/macos/
+vahh_app/web/
+
+vahh_app/pubspec.lock
