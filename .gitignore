@@ -18,4 +18,8 @@ flutter/
 # .py
 Dexter_ER2_Simulation.py
 Whisper_Test.py
+<<<<<<< HEAD
 Dexter_copsim.py
+=======
+Dexter_copsim.py
+>>>>>>> 0270b74f090072548e3626d2b84b4109d56c8e5e
