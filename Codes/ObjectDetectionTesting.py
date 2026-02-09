@@ -9,7 +9,7 @@ cap.set(3, 640)
 cap.set(4, 480)
 
 # Load trained model
-model = YOLO("best_11m.pt")
+model = YOLO("D:/College/VScode/Projects/VoiceAutomatedHelpingHand/YOLO_models_dataset/best_9c.pt")
 
 # Workspace configuration
 Table_Width_cm = 60
@@ -23,7 +23,7 @@ while True:
     if not ret:
         break
     
-    results = model(frame, stream=True)
+    results = model(frame, stream = True)
 
     # Draw bounding boxes with class names
     for result in results:
@@ -55,6 +55,7 @@ while True:
 
             # Display class name and confidence score
             cvzone.putTextRect(frame, f'{classes[cls], conf}', (max(0,x1),max(40,y1)) , scale = 1.5)
+
             # Display bounding box and object center dot
             cvzone.cornerRect(frame, (x1,y1,w,h))
             cv.circle(frame, (cx, cy), 5, (0,0,255), -1)
