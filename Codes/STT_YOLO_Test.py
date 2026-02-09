@@ -27,7 +27,7 @@ cap.set(3, 640)
 cap.set(4, 480)
 
 # Load trained model
-model = YOLO("best_11m.pt")
+model = YOLO("D:/College/VScode/Projects/VoiceAutomatedHelpingHand/YOLO_models_dataset/best_9c.pt")
 
 # Workspace configuration
 Table_Width_cm = 60
