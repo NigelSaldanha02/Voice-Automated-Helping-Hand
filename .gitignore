@@ -22,14 +22,4 @@ Dexter_copsim.py
 
 # --------------------
 # Ignore entire Flutter app
-vahh_app/*
-
-# --------------------
-# BUT allow Dart source
-!vahh_app/lib/
-!vahh_app/lib/**
-
-# --------------------
-# Allow backend server
-!vahh_app/vahh_server/
-!vahh_app/vahh_server/**
+vahh_app/
