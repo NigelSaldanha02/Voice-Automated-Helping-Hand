@@ -22,7 +22,11 @@ Dexter_copsim.py
 
 # --------------------
 # Ignore entire Flutter app
+<<<<<<< HEAD
 vahh_app/*
 !vahh_app/lib
 !vahh_app/vahh_server
 lib/config.dart
+=======
+vahh_app/
+>>>>>>> 98896d583de93c335f9a8343e2e367915de95051
