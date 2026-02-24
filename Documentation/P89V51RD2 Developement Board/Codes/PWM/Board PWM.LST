@@ -1,0 +1,133 @@
+C51 COMPILER V9.01   BOARD_PWM                                                             05/17/2010 10:11:33 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE BOARD_PWM
+OBJECT MODULE PLACED IN Board PWM.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE Board PWM.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*********************************************************************************************************
+             -*****
+   2                          Platform: P89V51RD2 Development Board.
+   3                          PWM using PCA (Timers and Counters)
+   4                          Written by: Kunal Joshi, NEX Robotics Pvt. Ltd.
+   5                          Edited By: Sachitanand Malewar, NEX Robotics Pvt. Ltd.
+   6                          Last Modification: 2010-23-04
+   7                          This programme is used to generate Pulse Width Modulation (PWM) using PCA
+   8                  Note: Only PWM 0 and PWM 1 channels are used 
+   9                  Compiled with: uVision3 V4.02; C Compiler: C51.Exe, V9.01
+  10          **********************************************************************************************************
+             -****/                          
+  11          
+  12          /********************************************************************************
+  13          
+  14             Copyright (c) 2010, NEX Robotics Pvt. Ltd.                       -*- c -*-
+  15             All rights reserved.
+  16          
+  17             Redistribution and use in source and binary forms, with or without
+  18             modification, are permitted provided that the following conditions are met:
+  19          
+  20             * Redistributions of source code must retain the above copyright
+  21               notice, this list of conditions and the following disclaimer.
+  22          
+  23             * Redistributions in binary form must reproduce the above copyright
+  24               notice, this list of conditions and the following disclaimer in
+  25               the documentation and/or other materials provided with the
+  26               distribution.
+  27          
+  28             * Neither the name of the copyright holders nor the names of
+  29               contributors may be used to endorse or promote products derived
+  30               from this software without specific prior written permission.
+  31          
+  32             * Source code can be used for academic purpose. 
+  33                   For commercial use permission form the author needs to be taken.
+  34          
+  35            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  36            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  37            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  38            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  39            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  40            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  41            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  42            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  43            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  44            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  45            POSSIBILITY OF SUCH DAMAGE. 
+  46          
+  47            Pin Configuration:-
+  48            Load count in PWM_0 and PWM_1.
+  49            check O/P on PORT PIN 1.3 and PORT PIN 1.4
+  50            
+  51            Software released under Creative Commence cc by-nc-sa licence.
+  52            For legal information refer to: 
+  53            http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
+C51 COMPILER V9.01   BOARD_PWM                                                             05/17/2010 10:11:33 PAGE 2   
+
+  54          
+  55          ********************************************************************************/
+  56          
+  57          #include <intrins.h>
+  58          #include "p89v51rx2.h"
+  59          
+  60          void PWM_0(unsigned char cnt0)
+  61          {
+  62   1      CCAP0H=cnt0;
+  63   1      }
+  64          
+  65          /*********************************************************************************
+  66          
+  67          void PWM_n(unsigned char cntn)
+  68          {
+  69          CCAPnH=cntn;     //n=0,1
+  70          }
+  71          
+  72          *********************************************************************************/
+  73          
+  74          void PWM_1(unsigned char cnt1)
+  75          {
+  76   1      CCAP1H=cnt1;
+  77   1      }
+  78          
+  79          //initialise programmable counter array module to generate pwm
+  80          //The CCAPnH register holds the reload value. CCAPnL register increments,and is loaded with this value eve
+             -rytime it overflows
+  81          void pca_init(void)
+  82          {
+  83   1       CMOD=0x80;    //80 sets PCA counter to run at Fosc/6; 
+  84   1       CCON=0x40;    //start PCA counter
+  85   1                                                      
+  86   1       CCAP0L=0x00;   
+  87   1       CCAP0H=0xFF;  //Left motor duty cycle register
+  88   1        
+  89   1       CCAP1L=0x00;                             
+  90   1       CCAP1H=0xFF;  //Right motor duty cycle register
+  91   1      
+  92   1       CCAPM0=0x42;  //enable PWM mode and ECOM bits for PWM_0
+  93   1       CCAPM1=0x42;  //enable PWM mode and ECOM bits for PWM_1
+  94   1      }
+  95          
+  96          void main()
+  97          {
+  98   1      pca_init();
+  99   1      PWM_0(0x40);   //0x00 will give full (100% duty cycle) , while 0xFF will give zero (0% duty cycle).             
+ 100   1      PWM_1(0x60);   //0x00 will give full (100% duty cycle) , while 0xFF will give zero (0% duty cycle). 
+ 101   1      while(1);
+ 102   1      }
+ 103          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     45    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILER V9.01   BOARD_PWM                                                             05/17/2010 10:11:33 PAGE 3   
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

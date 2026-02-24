@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+
+# VS Code
+.vscode/
+flutter/
+
+# OS
+.DS_Store
+
+# .py
+Dexter_ER2_Simulation.py
+Whisper_Test.py
+Dexter_copsim.py
+
+# --------------------
+# Ignore entire Flutter app
+vahh_app/*
+!vahh_app/lib
+!vahh_app/vahh_server
+lib/config.dart
