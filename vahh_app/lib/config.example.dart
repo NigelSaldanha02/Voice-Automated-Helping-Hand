@@ -1,0 +1,1 @@
+const String SERVER_IP = "YOUR_IP_HERE";

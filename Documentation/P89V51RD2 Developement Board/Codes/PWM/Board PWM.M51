@@ -1,0 +1,133 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        05/17/2010  10:11:48  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE Board PWM.obj TO Board PWM RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  Board PWM.obj (BOARD_PWM)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  Board PWM (BOARD_PWM)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     0018H     UNIT         ?PR?PCA_INIT?BOARD_PWM
+            CODE    0818H     000FH     UNIT         ?PR?MAIN?BOARD_PWM
+            CODE    0827H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0833H     0003H     UNIT         ?PR?_PWM_0?BOARD_PWM
+            CODE    0836H     0003H     UNIT         ?PR?_PWM_1?BOARD_PWM
+
+
+
+OVERLAY MAP OF MODULE:   Board PWM (BOARD_PWM)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?BOARD_PWM
+
+?PR?MAIN?BOARD_PWM
+  +--> ?PR?PCA_INIT?BOARD_PWM
+  +--> ?PR?_PWM_0?BOARD_PWM
+  +--> ?PR?_PWM_1?BOARD_PWM
+
+
+
+SYMBOL TABLE OF MODULE:  Board PWM (BOARD_PWM)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        BOARD_PWM
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+BL51 BANKED LINKER/LOCATER V6.22                                                      05/17/2010  10:11:48  PAGE 2
+
+
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  C:0833H         PUBLIC        _PWM_0
+  C:0836H         PUBLIC        _PWM_1
+  D:00A8H         PUBLIC        IEN0
+  D:00E8H         PUBLIC        IEN1
+  D:00FAH         PUBLIC        CCAP0H
+  D:00FBH         PUBLIC        CCAP1H
+  D:00EAH         PUBLIC        CCAP0L
+  D:00EBH         PUBLIC        CCAP1L
+  D:00DAH         PUBLIC        CCAPM0
+  D:00DBH         PUBLIC        CCAPM1
+  D:00D9H         PUBLIC        CMOD
+  D:00D8H         PUBLIC        CCON
+  C:0818H         PUBLIC        main
+  D:00C0H         PUBLIC        WDTC
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00B8H         PUBLIC        IP0
+  D:00F8H         PUBLIC        IP1
+  C:0800H         PUBLIC        pca_init
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _PWM_0
+  D:0007H         SYMBOL        cnt0
+  C:0833H         LINE#         60
+  C:0833H         LINE#         61
+  C:0833H         LINE#         62
+  C:0835H         LINE#         63
+  -------         ENDPROC       _PWM_0
+  -------         PROC          _PWM_1
+  D:0007H         SYMBOL        cnt1
+  C:0836H         LINE#         74
+  C:0836H         LINE#         75
+  C:0836H         LINE#         76
+  C:0838H         LINE#         77
+  -------         ENDPROC       _PWM_1
+  -------         PROC          PCA_INIT
+  C:0800H         LINE#         81
+  C:0800H         LINE#         82
+  C:0800H         LINE#         83
+  C:0803H         LINE#         84
+  C:0806H         LINE#         86
+  C:0809H         LINE#         87
+  C:080CH         LINE#         89
+  C:080EH         LINE#         90
+  C:0811H         LINE#         92
+  C:0814H         LINE#         93
+  C:0817H         LINE#         94
+  -------         ENDPROC       PCA_INIT
+  -------         PROC          MAIN
+  C:0818H         LINE#         96
+  C:0818H         LINE#         97
+  C:0818H         LINE#         98
+  C:081BH         LINE#         99
+  C:0820H         LINE#         100
+  C:0825H         LINE#         101
+BL51 BANKED LINKER/LOCATER V6.22                                                      05/17/2010  10:11:48  PAGE 3
+
+
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        BOARD_PWM
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 002DH BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=9.0 xdata=0 code=60
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

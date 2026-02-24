@@ -1,0 +1,108 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/11/2010  15:25:36  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE PORT.obj TO PORT RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  PORT.obj (PORT)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  PORT (PORT)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     0020H     UNIT         ?PR?_DELAY_MS?PORT
+            CODE    0820H     0015H     UNIT         ?PR?MAIN?PORT
+            CODE    0835H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   PORT (PORT)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?PORT
+
+?PR?MAIN?PORT
+  +--> ?PR?_DELAY_MS?PORT
+
+
+
+SYMBOL TABLE OF MODULE:  PORT (PORT)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PORT
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IEN0
+  D:00E8H         PUBLIC        IEN1
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/11/2010  15:25:36  PAGE 2
+
+
+  D:00D8H         PUBLIC        CCON
+  C:0820H         PUBLIC        main
+  D:00C0H         PUBLIC        WDTC
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00B8H         PUBLIC        IP0
+  D:00F8H         PUBLIC        IP1
+  C:0800H         PUBLIC        _delay_ms
+  D:00C8H         PUBLIC        T2CON
+  B:00A0H.0       PUBLIC        Port2_0
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _DELAY_MS
+  D:0006H         SYMBOL        ms
+  -------         DO            
+  D:0004H         SYMBOL        i
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:0800H         LINE#         63
+  C:0800H         LINE#         64
+  C:0800H         LINE#         67
+  C:080AH         LINE#         68
+  C:081FH         LINE#         69
+  -------         ENDPROC       _DELAY_MS
+  -------         PROC          MAIN
+  C:0820H         LINE#         71
+  C:0820H         LINE#         72
+  C:0820H         LINE#         73
+  C:0820H         LINE#         74
+  C:0820H         LINE#         75
+  C:0823H         LINE#         76
+  C:0825H         LINE#         77
+  C:082BH         LINE#         78
+  C:082EH         LINE#         79
+  C:0830H         LINE#         80
+  C:0833H         LINE#         81
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        PORT
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0035H BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=9.0 xdata=0 code=68
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

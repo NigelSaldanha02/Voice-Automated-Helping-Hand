@@ -1,0 +1,20 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+F:\89V51RD2 Development Board\Codes\codes\PORT_IO\PORT.uvproj
+Project File Date:  05/17/2010
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling PORT.c...
+linking...
+Program Size: data=9.0 xdata=0 code=68
+creating hex file from "PORT"...
+"PORT" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=9.0 xdata=0 code=68
+creating hex file from "PORT"...
+"PORT" - 0 Error(s), 0 Warning(s).

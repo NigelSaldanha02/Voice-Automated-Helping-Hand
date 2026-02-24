@@ -1,0 +1,150 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        05/17/2010  10:00:43  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE Board serial comm.obj TO Board serial comm RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  Board serial comm.obj (BOARD_SERIAL_COMM)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  Board serial comm (BOARD_SERIAL_COMM)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0001H     UNIT         ?DT?BOARD_SERIAL_COMM
+            IDATA   0009H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     0012H     UNIT         ?PR?MAIN?BOARD_SERIAL_COMM
+            CODE    089EH     0011H     UNIT         ?PR?UART_SETUP?BOARD_SERIAL_COMM
+            CODE    08AFH     0008H     UNIT         ?PR?_TXDATA?BOARD_SERIAL_COMM
+            CODE    08B7H     0004H     UNIT         ?C_INITSEG
+            CODE    08BBH     0003H     UNIT         ?PR?RXDATA?BOARD_SERIAL_COMM
+
+
+
+OVERLAY MAP OF MODULE:   Board serial comm (BOARD_SERIAL_COMM)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?BOARD_SERIAL_COMM
+  +--> ?C_INITSEG
+
+?PR?MAIN?BOARD_SERIAL_COMM
+  +--> ?PR?UART_SETUP?BOARD_SERIAL_COMM
+  +--> ?PR?RXDATA?BOARD_SERIAL_COMM
+  +--> ?PR?_TXDATA?BOARD_SERIAL_COMM
+
+
+
+SYMBOL TABLE OF MODULE:  Board serial comm (BOARD_SERIAL_COMM)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      05/17/2010  10:00:43  PAGE 2
+
+
+  -------         MODULE        BOARD_SERIAL_COMM
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IEN0
+  D:00E8H         PUBLIC        IEN1
+  B:0098H.0       PUBLIC        RI
+  B:0098H.1       PUBLIC        TI
+  D:00D8H         PUBLIC        CCON
+  C:088CH         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
+  D:00C0H         PUBLIC        WDTC
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:08BBH         PUBLIC        RxData
+  C:08AFH         PUBLIC        _TxData
+  D:00B8H         PUBLIC        IP0
+  D:00F8H         PUBLIC        IP1
+  D:008DH         PUBLIC        TH1
+  C:089EH         PUBLIC        uart_setup
+  D:00C8H         PUBLIC        T2CON
+  D:0008H         PUBLIC        i
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          UART_SETUP
+  C:089EH         LINE#         76
+  C:089EH         LINE#         77
+  C:089EH         LINE#         78
+  C:08A1H         LINE#         79
+  C:08A4H         LINE#         80
+  C:08A7H         LINE#         81
+  C:08AAH         LINE#         82
+  C:08ACH         LINE#         83
+  C:08AEH         LINE#         84
+  -------         ENDPROC       UART_SETUP
+  -------         PROC          RXDATA
+  -------         DO            
+  D:0007H         SYMBOL        rcv_data
+  -------         ENDDO         
+  C:08BBH         LINE#         93
+  C:08BBH         LINE#         94
+  C:08BBH         LINE#         96
+  C:08BDH         LINE#         97
+  C:08BDH         LINE#         98
+  -------         ENDPROC       RXDATA
+  -------         PROC          _TXDATA
+  D:0007H         SYMBOL        tx_data
+  C:08AFH         LINE#         107
+  C:08AFH         LINE#         108
+  C:08AFH         LINE#         109
+  C:08B3H         LINE#         110
+  C:08B6H         LINE#         112
+  -------         ENDPROC       _TXDATA
+  -------         PROC          MAIN
+  -------         DO            
+BL51 BANKED LINKER/LOCATER V6.22                                                      05/17/2010  10:00:43  PAGE 3
+
+
+  D:0006H         SYMBOL        rx_data
+  D:0005H         SYMBOL        tx_data
+  -------         ENDDO         
+  C:088CH         LINE#         114
+  C:088CH         LINE#         115
+  C:088CH         LINE#         117
+  C:088FH         LINE#         118
+  C:088FH         LINE#         119
+  C:088FH         LINE#         120
+  C:0892H         LINE#         121
+  C:0892H         LINE#         122
+  C:0895H         LINE#         123
+  C:0895H         LINE#         124
+  C:0898H         LINE#         125
+  C:089AH         LINE#         126
+  C:089CH         LINE#         127
+  C:089CH         LINE#         128
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        BOARD_SERIAL_COMM
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0031H BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=10.0 xdata=0 code=193
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

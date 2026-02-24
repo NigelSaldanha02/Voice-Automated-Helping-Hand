@@ -1,0 +1,114 @@
+C51 COMPILER V9.01   BOARD_INTERRUPT                                                       05/17/2010 10:57:57 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE BOARD_INTERRUPT
+OBJECT MODULE PLACED IN Board interrupt.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE Board interrupt.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*********************************************************************************************************
+             -*****
+   2                          Platform:P89V51RD2 Development Board.
+   3                          Use of External hardware 
+   4                          Written by: Kunal Joshi, NEX Robotics Pvt. Ltd.
+   5                          Edited By: Sachitanand Malewar, NEX Robotics Pvt. Ltd.
+   6                          Last Modification: 2010-23-04
+   7                          This program demonstrates the use of external hardware interrupt
+   8                          Compiled with: uVision3 V4.02; C Compiler: C51.Exe, V9.01
+   9          **********************************************************************************************************
+             -****/                
+  10          
+  11          /********************************************************************************
+  12          
+  13             Copyright (c) 2010, NEX Robotics Pvt. Ltd.                       -*- c -*-
+  14             All rights reserved.
+  15          
+  16             Redistribution and use in source and binary forms, with or without
+  17             modification, are permitted provided that the following conditions are met:
+  18          
+  19             * Redistributions of source code must retain the above copyright
+  20               notice, this list of conditions and the following disclaimer.
+  21          
+  22             * Redistributions in binary form must reproduce the above copyright
+  23               notice, this list of conditions and the following disclaimer in
+  24               the documentation and/or other materials provided with the
+  25               distribution.
+  26          
+  27             * Neither the name of the copyright holders nor the names of
+  28               contributors may be used to endorse or promote products derived
+  29               from this software without specific prior written permission.
+  30          
+  31             * Source code can be used for academic purpose. 
+  32                   For commercial use permission form the author needs to be taken.
+  33          
+  34            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  35            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  36            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  37            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  38            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  39            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  40            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  41            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  42            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  43            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  44            POSSIBILITY OF SUCH DAMAGE. 
+  45          
+  46            Pin Function:-
+  47            connect PORT3 To LED BAR Graph to check O/p.
+  48            connect  P3.3 (INT 1) to interrupt generated circuit.
+  49          
+  50          
+  51            Software released under Creative Commence cc by-nc-sa licence.
+  52            For legal information refer to: 
+  53            http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
+C51 COMPILER V9.01   BOARD_INTERRUPT                                                       05/17/2010 10:57:57 PAGE 2   
+
+  54          
+  55          ********************************************************************************/
+  56          
+  57          
+  58          #include <intrins.h>
+  59          #include "p89v51rx2.H"
+  60          
+  61          //initialization routine for Interrupt 1 setup.
+  62          
+  63          void int1_setup() //Initalisation of the Int 1 should be done in the same sequence as given in this functi
+             -on.
+  64          {
+  65   1       IEN0 = 0x84;      //External Interrupt 1 Enable and Global Interrupt Enable. 
+  66   1       P3 = 0x08;        //set P3.3 (INT 1) as input port.
+  67   1      }
+  68          
+  69          
+  70          //ISR for external Interrupt 1
+  71          
+  72          void int1_isr(void)interrupt 2     //ISR Routine for External Interrupt 1(INT 1).
+  73          {
+  74   1       P1=0xF0;                             // Active low to port 1
+  75   1       IE1=0;                           // Clearing IE1 flag to 0.
+  76   1      }                   
+  77                                          
+  78          void main()
+  79          { 
+  80   1       int1_setup();      //external linterrupt 1 initialization setup.
+  81   1       while(1)
+  82   1       {
+  83   2        P1=0x0F;          // Active High to port 1
+  84   2       }
+  85   1      }//main ends                
+  86          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     21    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

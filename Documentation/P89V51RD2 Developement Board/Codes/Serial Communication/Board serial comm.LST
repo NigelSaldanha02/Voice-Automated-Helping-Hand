@@ -1,0 +1,160 @@
+C51 COMPILER V9.01   BOARD_SERIAL_COMM                                                     05/17/2010 10:00:43 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE BOARD_SERIAL_COMM
+OBJECT MODULE PLACED IN Board serial comm.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE Board serial comm.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*********************************************************************************************************
+             -*****
+   2                          Platform: P89V51RD2 Development Board.
+   3                          Serial communication
+   4                          Written by: Kunal Joshi, NEX Robotics Pvt. Ltd.
+   5                          Edited By: Sachitanand Malewar, NEX Robotics Pvt. Ltd.
+   6                          Last Modification: 2010-23-04
+   7                          This Program echos back next ascii character of a character sent from the PC through serial communicatio
+             -n
+   8                          Compiled with: uVision3 V3.90; C Compiler: C51.Exe, V8.18
+   9          **********************************************************************************************************
+             -****/        
+  10          
+  11          /********************************************************************************
+  12          
+  13             Copyright (c) 2010, NEX Robotics Pvt. Ltd.                       -*- c -*-
+  14             All rights reserved.
+  15          
+  16             Redistribution and use in source and binary forms, with or without
+  17             modification, are permitted provided that the following conditions are met:
+  18          
+  19             * Redistributions of source code must retain the above copyright
+  20               notice, this list of conditions and the following disclaimer.
+  21          
+  22             * Redistributions in binary form must reproduce the above copyright
+  23               notice, this list of conditions and the following disclaimer in
+  24               the documentation and/or other materials provided with the
+  25               distribution.
+  26          
+  27             * Neither the name of the copyright holders nor the names of
+  28               contributors may be used to endorse or promote products derived
+  29               from this software without specific prior written permission.
+  30          
+  31             * Source code can be used for academic purpose. 
+  32                   For commercial use permission form the author needs to be taken.
+  33          
+  34            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  35            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  36            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  37            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  38            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  39            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  40            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  41            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  42            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  43            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  44            POSSIBILITY OF SUCH DAMAGE. 
+  45          
+  46            Pin Function:-
+  47              Connect DB9 cable between PC and the board. open any terminal software
+  48                  and set Baudrate as 9600, data bits 8, parity none, stop bits 1 
+  49                  i.e 9600 8-N-1. Establish communcation and send any letter,you will get next 
+  50                  ascii character of that character 
+  51            
+  52            Software released under Creative Commence cc by-nc-sa licence.
+C51 COMPILER V9.01   BOARD_SERIAL_COMM                                                     05/17/2010 10:00:43 PAGE 2   
+
+  53            For legal information refer to: 
+  54            http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
+  55          
+  56          ********************************************************************************/
+  57          
+  58          #include <intrins.h>
+  59          #include "p89v51rx2.H"
+  60           unsigned char i=0;
+  61          
+  62          /**************************************************************************
+  63                  Function: uart_setup()
+  64                  
+  65                  Description: This function configures Timer1 for generating the Baudrate.
+  66                               The TH1 register should be written with following hex numbers
+  67                               for desired baud rate. After setting the baudrate, SCON register
+  68                               for enabling Rx and setting up the frame format.
+  69                  
+  70                                   9600 ----->  0xFD
+  71                                       4800 ----->  0xFA
+  72                                       2400 ----->  0xF4
+  73                                       1200 ----->  0xE8
+  74          
+  75          **************************************************************************/
+  76          void uart_setup()
+  77          {
+  78   1          TMOD = 0x20;             // configure timer1 for Mode 2 operation for the correct baud rate 
+  79   1          TH1  = 0xFD;             // 9600 bps for 11.0592 MHz clock 
+  80   1          TCON = 0x40;             // Start timer 1 by setting TR1 = 1 
+  81   1          SCON = 0x50;             // Set Serial IO to receive and normal mode 
+  82   1              RI=0;                //Receive Interrupt Flag is cleared
+  83   1              TI=0;                //Tx interrupt flag is cleared
+  84   1      }                                
+  85          
+  86          /***************************************************************************
+  87                  Function: void char RxData()
+  88                  
+  89                  Description: This function copies any data that is present in the SBUF 
+  90                                       register and returns it to the calling function.
+  91          ***************************************************************************/
+  92          
+  93           unsigned char RxData()
+  94          {
+  95   1          unsigned char rcv_data;
+  96   1          rcv_data = SBUF;              //if any data is available copy it from SBUF
+  97   1          return rcv_data;              //return the received data
+  98   1      }
+  99          
+ 100          /***************************************************************************
+ 101                  Function: void TxData(unsigned char tx_data)
+ 102                  
+ 103                  Description: This function transmits  any data that is passed to it
+ 104                               and waits until it is transmitted.
+ 105          ***************************************************************************/
+ 106          
+ 107          void TxData(unsigned char tx_data)
+ 108          {
+ 109   1          SBUF = tx_data+1;
+ 110   1          while(TI == 0);                     //wait while data is being transmitted
+ 111   1              
+ 112   1      }
+ 113          
+ 114          void main(void)
+C51 COMPILER V9.01   BOARD_SERIAL_COMM                                                     05/17/2010 10:00:43 PAGE 3   
+
+ 115          {
+ 116   1       unsigned char rx_data,tx_data;
+ 117   1       uart_setup();              // calling the UART setup function
+ 118   1       while(1)                   //loop continuously
+ 119   1       {
+ 120   2        if (RI==1)                // if any data is present store it and transmit it back 
+ 121   2        {
+ 122   3         rx_data = RxData();      //get the received data
+ 123   3         tx_data = rx_data;
+ 124   3         TxData(tx_data);         // transmit it back to the PC. This data can be viewed onto the 'terminal'
+ 125   3         RI = 0;                  //Clear receive interrupt. Must be cleared by the user.
+ 126   3         TI = 0;                          //Clear transmit interrupt. Must be cleared by the user.
+ 127   3        }
+ 128   2       }
+ 129   1      }
+ 130          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     46    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
