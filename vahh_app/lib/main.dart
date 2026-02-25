@@ -5,11 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 // 🔴 CHANGE TO YOUR LAPTOP WIFI IP
-<<<<<<< HEAD
-const String serverUrl = "http://192.168.0.172:5000";
-=======
-const String serverUrl = ;
->>>>>>> 98896d583de93c335f9a8343e2e367915de95051
+const String serverUrl = "http://192.168.1.175/24";
 
 void main() {
   runApp(const VAHHApp());
@@ -279,8 +275,4 @@ class _PulsingButtonState extends State<PulsingButton>
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 98896d583de93c335f9a8343e2e367915de95051

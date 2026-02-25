@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-from logic import check_object, start_detection, get_status
+#from logic import check_object, start_detection, get_status
+from logic_rpicam import check_object, start_detection, get_status
 
 app = Flask(__name__)
 
