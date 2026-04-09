@@ -1,11 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-// 🔴 CHANGE TO YOUR LAPTOP WIFI IP
-const String serverUrl = "http://192.168.1.175/24";
+const String serverUrl = "http://192.168.4.1:5000";
 
 void main() {
   runApp(const VAHHApp());
@@ -13,7 +13,6 @@ void main() {
 
 class VAHHApp extends StatelessWidget {
   const VAHHApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -26,19 +25,22 @@ class VAHHApp extends StatelessWidget {
 // ======================================================
 // HOME SCREEN
 // ======================================================
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String displayText = "SPEAK";
-  bool busy = false;
+  String displayText  = "SPEAK";
+  bool   busy         = false;
+  bool   showCamera   = false;   // show camera feed while arm is working
 
   late stt.SpeechToText _speech;
+  Timer? _frameTimer;
+
+  // Timestamp buster so Flutter reloads the image each tick
+  int _frameTs = 0;
 
   @override
   void initState() {
@@ -46,38 +48,51 @@ class _HomeScreenState extends State<HomeScreen> {
     _speech = stt.SpeechToText();
   }
 
-  // 🎤 PHONE MICROPHONE STT
- Future<String> listenFromPhone() async {
-  bool available = await _speech.initialize();
-  if (!available) return "";
+  @override
+  void dispose() {
+    _frameTimer?.cancel();
+    super.dispose();
+  }
 
-  String recognizedText = "";
+  // ── Start polling /frame every 200 ms ──────────────────
+  void _startCameraFeed() {
+    setState(() => showCamera = true);
+    _frameTimer = Timer.periodic(const Duration(milliseconds: 200), (_) {
+      setState(() => _frameTs = DateTime.now().millisecondsSinceEpoch);
+    });
+  }
 
-  await _speech.listen(
-    onResult: (result) {
-      recognizedText = result.recognizedWords;
-    },
-    listenOptions: stt.SpeechListenOptions(
-      listenMode: stt.ListenMode.confirmation,
-      partialResults: false,
-    ),
-  );
+  void _stopCameraFeed() {
+    _frameTimer?.cancel();
+    setState(() => showCamera = false);
+  }
 
-  await Future.delayed(const Duration(seconds: 4));
-  await _speech.stop();
+  // ── STT ────────────────────────────────────────────────
+  Future<String> listenFromPhone() async {
+    bool available = await _speech.initialize();
+    if (!available) return "";
 
-  return recognizedText.toLowerCase();
-}
+    String recognizedText = "";
+    await _speech.listen(
+      onResult: (result) => recognizedText = result.recognizedWords,
+      listenOptions: stt.SpeechListenOptions(
+        listenMode: stt.ListenMode.confirmation,
+        partialResults: false,
+      ),
+    );
+    await Future.delayed(const Duration(seconds: 4));
+    await _speech.stop();
+    return recognizedText.toLowerCase();
+  }
 
-
+  // ── Main flow ──────────────────────────────────────────
   Future<void> runVAHH() async {
     if (busy) return;
     busy = true;
-
     HapticFeedback.mediumImpact();
 
     try {
-      // 1️⃣ LISTEN (PHONE MIC)
+      // 1. Listen
       setState(() => displayText = "Listening...");
       final spokenText = await listenFromPhone();
 
@@ -88,17 +103,16 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      // 2️⃣ YOU SAID
+      // 2. Show what was heard
       setState(() => displayText = "You said:\n$spokenText");
       await Future.delayed(const Duration(seconds: 1));
 
-      // 3️⃣ PROCESS COMMAND
+      // 3. Send to server
       final processRes = await http.post(
         Uri.parse("$serverUrl/process"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"text": spokenText}),
       );
-
       final result = jsonDecode(processRes.body);
 
       if (!result["present"]) {
@@ -110,31 +124,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final String object = result["object"];
 
-      // 4️⃣ SEARCHING
+      // 4. Start camera feed + searching message
+      _startCameraFeed();
       setState(() => displayText = "Searching for $object...");
 
-      // 5️⃣ POLL YOLO STATUS
+      // 5. Poll status
       while (true) {
         await Future.delayed(const Duration(seconds: 1));
-        final statusRes =
-            await http.get(Uri.parse("$serverUrl/status"));
-        final state = jsonDecode(statusRes.body)["state"];
+        final statusRes = await http.get(Uri.parse("$serverUrl/status"));
+        final state     = jsonDecode(statusRes.body)["state"];
 
-        if (state == "detected") {
+        if (state == "detected" || state == "moving") {
           HapticFeedback.heavyImpact();
           setState(() => displayText = "Bringing $object...");
         }
 
         if (state == "done") {
+          // Keep camera until arm is fully home, then hide
+          _stopCameraFeed();
           HapticFeedback.vibrate();
-          setState(() =>
-              displayText = "✓ ${capitalize(object)} delivered");
+          setState(() => displayText = "✓ ${capitalize(object)} delivered");
           await Future.delayed(const Duration(seconds: 2));
           reset();
           return;
         }
       }
-    } catch (_) {
+    } catch (e) {
+      _stopCameraFeed();
       setState(() => displayText = "Server error");
       await Future.delayed(const Duration(seconds: 2));
       reset();
@@ -144,56 +160,80 @@ class _HomeScreenState extends State<HomeScreen> {
   void reset() {
     setState(() {
       displayText = "SPEAK";
-      busy = false;
+      busy        = false;
     });
   }
 
-  String capitalize(String s) =>
-      s[0].toUpperCase() + s.substring(1);
+  String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 
+  // ── Build ───────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF202020),
       body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
 
-              const Center(
-                child: Column(
-                  children: [
-                    Text("🤖", style: TextStyle(fontSize: 28)),
-                    SizedBox(height: 6),
-                    Text(
-                      "Voice\nAutomated\nHelping\nHand",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        height: 1.25,
+            // Title
+            const Center(
+              child: Column(
+                children: [
+                  Text("🤖", style: TextStyle(fontSize: 28)),
+                  SizedBox(height: 6),
+                  Text(
+                    "Voice\nAutomated\nHelping\nHand",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      height: 1.25,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Camera feed — shown only while arm is working
+            if (showCamera)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    "$serverUrl/frame?ts=$_frameTs",
+                    height: 220,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,   // no flicker between frames
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 220,
+                      color: Colors.black,
+                      child: const Center(
+                        child: Text("Waiting for camera...",
+                            style: TextStyle(color: Colors.white54)),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
 
-              const Spacer(),
+            const Spacer(),
 
-              Center(
-                child: PulsingButton(
-                  text: displayText,
-                  onTap: runVAHH,
-                ),
+            // Speak button
+            Center(
+              child: PulsingButton(
+                text: displayText,
+                onTap: runVAHH,
               ),
+            ),
 
-              const Spacer(),
-            ],
-          ),
+            const Spacer(),
+          ],
         ),
       ),
     );
@@ -203,17 +243,10 @@ class _HomeScreenState extends State<HomeScreen> {
 // ======================================================
 // PULSING BUTTON
 // ======================================================
-
 class PulsingButton extends StatefulWidget {
   final String text;
   final VoidCallback onTap;
-
-  const PulsingButton({
-    super.key,
-    required this.text,
-    required this.onTap,
-  });
-
+  const PulsingButton({super.key, required this.text, required this.onTap});
   @override
   State<PulsingButton> createState() => _PulsingButtonState();
 }
@@ -221,17 +254,15 @@ class PulsingButton extends StatefulWidget {
 class _PulsingButtonState extends State<PulsingButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _scale;
+  late Animation<double>   _scale;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-
     _scale = Tween(begin: 1.0, end: 1.06).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );

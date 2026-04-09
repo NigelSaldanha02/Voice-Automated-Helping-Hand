@@ -14,7 +14,7 @@ H = np.load("homography.npy")
 # -----------------------------
 # Initialize Top Camera (Cam1)
 # -----------------------------
-picam = Picamera2(1)
+picam = Picamera2(0)
 config = picam.create_preview_configuration(
     main={"size": (640, 480)}
 )
@@ -26,7 +26,7 @@ time.sleep(2)
 # -----------------------------
 # Load YOLO Model
 # -----------------------------
-model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand-main/YOLO_models_dataset/best_9c.pt")
+model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand/YOLO_models_dataset/best_9c.pt")
 classes = model.names
 
 # -----------------------------

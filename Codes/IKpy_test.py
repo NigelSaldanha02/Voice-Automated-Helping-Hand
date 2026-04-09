@@ -1,42 +1,48 @@
 import numpy as np
+import math
+import ikpy.chain
+import ikpy.utils.plot as plot_utils
 import matplotlib.pyplot as plt
-from ikpy.utils import plot
-from ikpy.chain import Chain
+import matplotlib
+matplotlib.use('Qt5Agg')
 
-# Load URDF file
-arm = Chain.from_urdf_file(
-    "D:\College\VScode\Projects\VoiceAutomatedHelpingHand\Dexter_Sim/Dexter_ER2.urdf",
-    active_links_mask=[False, True, True, True, True, True, False]
+# -----------------------------
+# LOAD YOUR URDF
+# -----------------------------
+arm = ikpy.chain.Chain.from_urdf_file(
+    "/home/gec123/Downloads/Voice-Automated-Helping-Hand/Dexter_Sim/Models/Dexter_ER2.urdf",
+    active_links_mask=[False, True, True, True, True, False, True]
 )
 
-# Target (meters)
-target_position = [0.02, 0.01, 0]
+# -----------------------------
+# TARGET POSITION
+# -----------------------------
+target_position = [0.2, 0.2, 0]   # change this freely
 
-# Initialize zero position
-initial_angles = np.zeros(len(arm.links))
-print(initial_angles)
+# -----------------------------
+# COMPUTE IK
+# -----------------------------
+ik = arm.inverse_kinematics(target_position)
 
-# Solve IK
-ik_solution = arm.inverse_kinematics(target_position, initial_angles, max_iter = 200)
+# ignore base dummy
+angles_deg = [math.degrees(a) for a in ik]
 
-print("\nIK solution:")
-for link, angle in zip(arm.links, ik_solution):
-    print(f"{link.name:15s}: {angle:.3f}")
+print("Joint angles (rad):", ik)
+print("Joint angles (deg):", angles_deg)
 
-# FK check
-fk = arm.forward_kinematics(ik_solution)
+# -----------------------------
+# FORWARD KINEMATICS CHECK
+# -----------------------------
+fk = arm.forward_kinematics(ik)
 
-print("\nEnd-effector position from FK:")
-print(fk[:3, 3])
+print("Target:", target_position)
+print("Reached:", fk[:3, 3])
 
-# Visuale in 3D
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+# -----------------------------
+# PLOT
+# -----------------------------
+fig, ax = plot_utils.init_3d_figure()
 
-plot.plot_chain(arm, ik_solution, ax)
-
-ax.set_xlim([-0.3, 0.3])
-ax.set_ylim([-0.3, 0.3])
-ax.set_zlim([0, 0.5])
+arm.plot(ik, ax, target=target_position)
 
 plt.show()

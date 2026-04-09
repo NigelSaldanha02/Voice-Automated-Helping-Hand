@@ -4,11 +4,11 @@ from picamera2 import Picamera2
 import time
 
 # Workspace real dimensions (cm)
-WORKSPACE_WIDTH = 14.5
-WORKSPACE_HEIGHT = 21
+WORKSPACE_WIDTH = 34
+WORKSPACE_HEIGHT = 34
 
 # Initialize camera (Top Camera = Cam1)
-picam = Picamera2(1)
+picam = Picamera2(0)
 config = picam.create_preview_configuration(main={"size": (640, 480)})
 picam.configure(config)
 picam.start()

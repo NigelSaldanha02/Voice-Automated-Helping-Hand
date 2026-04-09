@@ -8,7 +8,7 @@ import time
 # -----------------------------
 # Initialize Raspberry Pi Camera
 # -----------------------------
-picam2 = Picamera2()
+picam2 = Picamera2(0)
 
 # Configure camera resolution (matches your previous 640x480)
 config = picam2.create_preview_configuration(
@@ -22,7 +22,7 @@ time.sleep(2)  # Allow camera to warm up
 # -----------------------------
 # Load YOLO model
 # -----------------------------
-model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand-main/YOLO_models_dataset/best_9c.pt")
+model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand/YOLO_models_dataset/best_9c.pt")
 
 # Workspace configuration
 Table_Width_cm = 60
