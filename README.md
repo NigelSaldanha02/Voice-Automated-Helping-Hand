@@ -71,6 +71,7 @@ We reviewed **15 research papers** covering:
 - ✅ Testing YOLO for household object detection  
 - ✅ Integrating STT+YOLO into an app
 - ✅ Kinematics and simulations for the arm
+- 🔁 Fine-tuning dataset and overall system response time
 
 ---
 
