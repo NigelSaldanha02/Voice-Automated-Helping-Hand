@@ -24,9 +24,7 @@ The system integrates:
 
 ### Hardware  
 - **Raspberry Pi** → main controller for object detection & voice processing  
-- **Dual Cameras**:  
-  - Overhead camera → XY coordinate localization of objects  
-  - Arm-mounted camera → classification & confirmation  
+- **Overhead Camera** → XY coordinate localization of objects    
 - **Robotic Arm** → executes pick-and-place tasks  
 
 ### Software  
@@ -79,7 +77,7 @@ We reviewed **15 research papers** covering:
 ## 🚀 Future Scope  
 - Expand object database for detection  
 - Improve arm precision with advanced kinematics such as motion planning
-- Improve pixel to real world coordinates conversion using camera calibration
+- Improve pixel to real world coordinates conversion using camera calibration and a dual camera setup
 - Enhance response time for real time applications (like Tony Stark's DUM-E)
 - Enable multi-object tasks (e.g., fetch + deliver sequence)  
 - Add haptic/safety features  
