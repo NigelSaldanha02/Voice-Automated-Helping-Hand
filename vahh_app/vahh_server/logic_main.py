@@ -26,7 +26,7 @@ time.sleep(2)
 # -----------------------------
 # Load YOLO Model
 # -----------------------------
-model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand/YOLO_models_dataset/best_9c.pt")
+model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand/YOLO_models_dataset/best_9Cv5.pt")
 classes = [c.lower() for c in model.names.values()]
 
 # -----------------------------
@@ -58,14 +58,35 @@ JOINT_OFFSET       = {"J1": 90, "J2": 75, "J3": 75, "J4": 75, "J5": 90}
 JOINT_FLIP         = {"J1": False, "J2": False, "J3": False, "J4": False, "J5": False}
 GRIP_OPEN          = 180
 GRIP_CLOSE         = 0
-FIXED_Z            = 0.01
-STEP_DELAY         = 0.005
+FIXED_Z            = 0.03
+X_OFFSET_M = 0    # tune this
+Y_OFFSET_M = 0 
+STEP_DELAY         = 0.004
+
+# Per-object pick offsets — tune each object independently
+# Falls back to DEFAULT_PICK_OFFSET for unlisted objects
+OBJECT_PICK_OFFSET = {
+    "water bottle": {"J1": 0, "J2": -10,  "J3": -20, "J4": -45, "J5": 0},
+    "remote":       {"J1": 0, "J2": -5,  "J3": -8,  "J4": -15, "J5": 0},
+    "medicine":     {"J1": 0, "J2": -8,  "J3": -10, "J4": -23, "J5": 0},
+    "orange":       {"J1": 0, "J2": -6,  "J3": -9,  "J4": -18, "J5": 0},
+    "banana":       {"J1": 0, "J2": -8,  "J3": -10, "J4": -30, "J5": 0},
+}
+DEFAULT_PICK_OFFSET = {"J1": 0, "J2": -8, "J3": -10, "J4": -23, "J5": 0}
+
+CLASS_CX_OFFSET = {
+    "medicine": 1.3,
+    "water bottle": 1.2,
+    "remote": 1.3
+}
+DEFAULT_CX_OFFSET = 1
 
 CLASS_CY_OFFSET = {
-    "water bottle": 0.9,
-    "remote":       0.75,
-    # add more objects as you test them
-    # anything not listed falls back to DEFAULT
+    "water bottle": 0.65,
+    "remote":       0.5,
+    "medicine": 0.3,
+    "orange": 0.78,
+    "banana": 0.55
 }
 DEFAULT_CY_OFFSET = 0.5   # fallback for unlisted objects
 
@@ -126,13 +147,24 @@ def move_rest_then_j1(angle_map, gripper_angle=None, j1_delay=0.5):
     if gripper_angle is not None:
         set_joint("EE", gripper_angle)
 
+def ikpy_to_servo(joint_name, ik_array, picking=False, obj=None):
+    rad = ik_array[IK_INDEX[joint_name]]
+    deg = math.degrees(rad)
+    if JOINT_FLIP[joint_name]:
+        deg = -deg
+    offset = JOINT_OFFSET[joint_name]
+    if picking and obj is not None:
+        pick_offsets = OBJECT_PICK_OFFSET.get(obj, DEFAULT_PICK_OFFSET)
+        offset += pick_offsets.get(joint_name, 0)
+    return clamp(deg + offset, 0, 180)
+'''
 def ikpy_to_servo(joint_name, ik_array):
     rad = ik_array[IK_INDEX[joint_name]]
     deg = math.degrees(rad)
     if JOINT_FLIP[joint_name]:
         deg = -deg
     return clamp(deg + JOINT_OFFSET[joint_name], 0, 180)
-
+'''
 def move_home(gripper_angle=None):
     move_rest_then_j1(
         {j: HOME_SERVO_ANGLES[j] for j in ["J1","J2","J3","J4","J5"]},
@@ -168,8 +200,8 @@ def compute_ik(x, y, z, max_attempts=5, threshold_m=0.015):
     current_ik = best_ik
     return best_ik
 
-def move_to_ik(ik_array, gripper_angle=None):
-    angle_map = {jname: ikpy_to_servo(jname, ik_array) for jname in IK_INDEX}
+def move_to_ik(ik_array, gripper_angle=None, obj=None):
+    angle_map = {jname: ikpy_to_servo(jname, ik_array, picking=True, obj=obj) for jname in IK_INDEX}
     move_j1_then_rest(angle_map, gripper_angle=gripper_angle)
 
 def retract_from_ik(ik_array, gripper_angle=None):
@@ -184,29 +216,29 @@ def pick_and_handoff(x_m, y_m):
 
     target_ik = compute_ik(x_m, y_m, FIXED_Z)
 
-    move_to_ik(target_ik, gripper_angle=GRIP_OPEN)
-    time.sleep(3)
+    move_to_ik(target_ik, gripper_angle=GRIP_OPEN, obj=current_object)
+    time.sleep(1)
 
     set_joint("EE", GRIP_CLOSE)
     time.sleep(2)
-
+    '''
     retract_from_ik(target_ik, gripper_angle=GRIP_CLOSE)
     time.sleep(1)
-
+    '''
     move_home(gripper_angle=GRIP_CLOSE)
-    time.sleep(2)
+    time.sleep(1)
 
     move_j1_then_rest(
         {j: HANDOFF_SERVO_ANGLES[j] for j in ["J1","J2","J3","J4","J5"]},
         gripper_angle=HANDOFF_SERVO_ANGLES["EE"]
     )
-    time.sleep(2)
+    time.sleep(1)
 
     set_joint("EE", GRIP_OPEN)
-    time.sleep(2)
+    time.sleep(1)
 
     move_home()
-    time.sleep(2)
+    time.sleep(1)
 
     # Release all servos
     for channels in JOINTS.values():
@@ -248,12 +280,13 @@ def yolo_worker():
                 cls_id   = int(box.cls[0])
                 label    = classes[cls_id]
 
-                if conf < 0.7:
+                if conf < 0.6:
                     continue
-
+                
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 w, h = x2 - x1, y2 - y1
-                cx = x1 + w // 2
+                cx_ratio = CLASS_CX_OFFSET.get(label, DEFAULT_CX_OFFSET)
+                cx = x1 + int(w* cx_ratio) // 2
                 # Per-class vertical offset
                 cy_ratio = CLASS_CY_OFFSET.get(label, DEFAULT_CY_OFFSET)
                 cy = y1 + int(h * cy_ratio)
@@ -261,7 +294,11 @@ def yolo_worker():
                 pixel_point = np.array([[[cx, cy]]], dtype=np.float32)
                 world_point = cv.perspectiveTransform(pixel_point, H)
                 Xw = world_point[0][0][0] 
-                Yw = world_point[0][0][1] 
+                Yw = world_point[0][0][1]
+
+                # Apply systematic offset correction
+                x_m = (Xw / 100.0) + X_OFFSET_M
+                y_m = (Yw / 100.0) + Y_OFFSET_M 
 
                 # Draw all detections
                 cvzone.cornerRect(frame, (x1, y1, w, h))
@@ -275,7 +312,7 @@ def yolo_worker():
                 # Track best match for target object
                 if label == current_object:
                     if best is None or conf > best[0]:
-                        best = (conf, Xw / 100.0, Yw / 100.0)
+                        best = (conf, x_m, y_m)
 
         # Encode frame as JPEG and store for streaming
         _, jpeg = cv.imencode('.jpg', frame)
