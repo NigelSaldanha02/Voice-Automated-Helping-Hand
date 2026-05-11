@@ -26,7 +26,7 @@ time.sleep(2)
 # -----------------------------
 # Load YOLO Model
 # -----------------------------
-model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand/YOLO_models_dataset/best_9Cv5.pt")
+model = YOLO("/home/gec123/Downloads/Voice-Automated-Helping-Hand/YOLO_models_dataset/best_9Cv6.pt")
 classes = [c.lower() for c in model.names.values()]
 
 # -----------------------------
@@ -68,25 +68,25 @@ STEP_DELAY         = 0.004
 OBJECT_PICK_OFFSET = {
     "water bottle": {"J1": 0, "J2": -10,  "J3": -20, "J4": -45, "J5": 0},
     "remote":       {"J1": 0, "J2": -5,  "J3": -8,  "J4": -15, "J5": 0},
-    "medicine":     {"J1": 0, "J2": -8,  "J3": -10, "J4": -23, "J5": 0},
+    "medicine":     {"J1": 0, "J2": -5,  "J3": -15, "J4": -20, "J5": 0},
     "orange":       {"J1": 0, "J2": -6,  "J3": -9,  "J4": -18, "J5": 0},
-    "banana":       {"J1": 0, "J2": -8,  "J3": -10, "J4": -30, "J5": 0},
+    "banana":       {"J1": 0, "J2": -12,  "J3": -10, "J4": -30, "J5": 0},
 }
 DEFAULT_PICK_OFFSET = {"J1": 0, "J2": -8, "J3": -10, "J4": -23, "J5": 0}
 
 CLASS_CX_OFFSET = {
-    "medicine": 1.3,
     "water bottle": 1.2,
-    "remote": 1.3
+    "remote": 1.3,
+    "banana": 1.1,
+    "medicine": 1.45
 }
 DEFAULT_CX_OFFSET = 1
 
 CLASS_CY_OFFSET = {
     "water bottle": 0.65,
     "remote":       0.5,
-    "medicine": 0.3,
     "orange": 0.78,
-    "banana": 0.55
+    "banana": 0.5
 }
 DEFAULT_CY_OFFSET = 0.5   # fallback for unlisted objects
 
@@ -280,7 +280,7 @@ def yolo_worker():
                 cls_id   = int(box.cls[0])
                 label    = classes[cls_id]
 
-                if conf < 0.6:
+                if conf < 0.7:
                     continue
                 
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
